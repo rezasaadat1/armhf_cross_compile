@@ -1,7 +1,7 @@
 {
-	"name": "Ubuntu",
+	"name": "CrossCompile Development",
 	"build": {
-        "dockerfile": "Dockerfile"
+		"dockerfile": "Dockerfile"
 	},
 	"features": {
 		"ghcr.io/devcontainers/features/common-utils:2": {
@@ -13,13 +13,26 @@
 			"username": "vscode",
 			"userUid": "automatic",
 			"userGid": "automatic"
-		}
+		},
+		"ghcr.io/devcontainers/features/github-cli:1": {}
 	},
-    	"customizations": {
+	"customizations": {
 		"vscode": {
+			"settings": {
+				"terminal.integrated.defaultProfile.linux": "zsh",
+				"C_Cpp.default.compilerPath": "/usr/bin/arm-linux-gnueabihf-g++",
+				"C_Cpp.default.intelliSenseMode": "linux-gcc-arm",
+				"editor.formatOnSave": true,
+				"files.trimTrailingWhitespace": true,
+				"files.insertFinalNewline": true
+			},
 			"extensions": [
 				"ms-vscode.cpptools-extension-pack",
-				"eamodio.gitlens"
+				"ms-vscode.makefile-tools",
+				"eamodio.gitlens",
+				"EditorConfig.EditorConfig",
+				"xaver.clang-format",
+				"streetsidesoftware.code-spell-checker"
 			]
 		}
 	},

@@ -1,3 +1,60 @@
-.DS_Store
-program.bin.dSYM/
+# Compiled binaries
 *.bin
+*.elf
+*.out
+*.exe
+*.o
+*.obj
+*.a
+*.so
+*.dylib
+
+# Debug symbols
+*.dSYM/
+*.pdb
+*.dwarf
+
+# Build directories
+build/
+out/
+bin/
+obj/
+
+# IDE and editor files
+.vscode/settings.json
+*.swp
+*.swo
+*~
+.idea/
+*.sublime-*
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Toolchain files
+*.toolchain/
+gcc-linaro-*/
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# Core dumps
+core
+core.*
+
+# Archives
+*.tar.gz
+*.tgz
+*.zip
+
+# Downloaded libraries (keep in version control if needed)
+# lib/
+# host/lib/

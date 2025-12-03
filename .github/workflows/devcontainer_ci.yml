@@ -20,6 +20,9 @@ jobs:
           - riscv64
           - amd64
           - i386
+        build_type:
+          - debug
+          - release
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout repository
@@ -38,38 +41,51 @@ jobs:
           imageName: ghcr.io/${{ github.repository_owner }}/armhf_cross_compile/devcontainer
           cacheFrom: ghcr.io/${{ github.repository_owner }}/armhf_cross_compile/devcontainer
           runCmd: |
-            if [ "${{ matrix.platform }}" == "arm64" ]; then
+            # Set compiler based on platform
+            case "${{ matrix.platform }}" in
+              arm64)
+                export CPP=aarch64-linux-gnu-g++
+                export CC=aarch64-linux-gnu-gcc
+                ;;
+              armhf)
+                export CPP=arm-linux-gnueabihf-g++
+                export CC=arm-linux-gnueabihf-gcc
+                ;;
+              armel)
+                export CPP=arm-linux-gnueabi-g++
+                export CC=arm-linux-gnueabi-gcc
+                ;;
+              riscv64)
+                export CPP=riscv64-linux-gnu-g++
+                export CC=riscv64-linux-gnu-gcc
+                ;;
+              amd64)
+                export CPP=x86_64-linux-gnu-g++
+                export CC=x86_64-linux-gnu-gcc
+                ;;
+              i386)
+                export CPP=i686-linux-gnu-g++
+                export CC=i686-linux-gnu-gcc
+                ;;
+            esac
+
             export CROSS_ARCH=${{ matrix.platform }}
-            export CC=aarch64-linux-gnu-gcc
-            export CPP=aarch64-linux-gnu-g++
-            elif [ "${{ matrix.platform }}" == "armhf" ]; then
-            export CROSS_ARCH=${{ matrix.platform }}
-            export CC=arm-linux-gnueabihf-gcc
-            export CPP=arm-linux-gnueabihf-g++
-            elif [ "${{ matrix.platform }}" == "armel" ]; then
-            export CROSS_ARCH=${{ matrix.platform }}
-            export CC=arm-linux-gnueabi-gcc
-            export CPP=arm-linux-gnueabi-g++
-            elif [ "${{ matrix.platform }}" == "riscv64" ]; then
-            export CROSS_ARCH=${{ matrix.platform }}
-            export CC=riscv64-linux-gnu-gcc
-            export CPP=riscv64-linux-gnu-g++
-            elif [ "${{ matrix.platform }}" == "amd64" ]; then
-            export CROSS_ARCH=${{ matrix.platform }}
-            export CC=x86_64-linux-gnu-gcc
-            export CPP=x86_64-linux-gnu-g++
-            elif [ "${{ matrix.platform }}" == "i386" ]; then
-            export CROSS_ARCH=${{ matrix.platform }}
-            export CC=i686-linux-gnu-gcc
-            export CPP=i686-linux-gnu-g++
+
+            # Build based on build type
+            if [ "${{ matrix.build_type }}" == "release" ]; then
+              make cross-release
+            else
+              make cross-debug
             fi
-            make cross_compile
+
+            # Rename output file to include build type
+            mv firmware_${{ matrix.platform }}.bin firmware_${{ matrix.platform }}_${{ matrix.build_type }}.bin
 
       - name: Upload files to GH release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref }}
-          file: firmware_${{ matrix.platform }}.bin
-          asset_name: firmware_${{ matrix.platform }}_${{ github.ref_name }}.bin
+          file: firmware_${{ matrix.platform }}_${{ matrix.build_type }}.bin
+          asset_name: firmware_${{ matrix.platform }}_${{ matrix.build_type }}_${{ github.ref_name }}.bin
           prerelease: true
