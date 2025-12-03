@@ -136,4 +136,3 @@ jobs:
           else
             echo "❌ Some builds failed. Check the logs above." >> $GITHUB_STEP_SUMMARY
           fi
-          prerelease: true
